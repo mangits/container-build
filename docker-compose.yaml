@@ -1,0 +1,44 @@
+# The Docker Config version. Do not change.
+version: "3.1"
+services:
+  frontend:
+    build: ./frontend/roster
+    container_name: frontend
+    # volumes:
+    #   - "./frontend/roster:/app"
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+      - server
+
+  server:
+    build: ./server
+    container_name: server
+    # volumes:
+    #   - "./server:/app"
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=docker
+    # - POSTGRES_DB=db
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+networks:
+  app-network:
+    driver: bridge
